@@ -1,17 +1,18 @@
 import streamlit as st
 
-st.set_page_config(page_title="Student Prediction App", layout="wide")
 
-st.title("\U0001F393 Student Performance Prediction Using Demographics → Marks → Pass/Fail")
 
-st.header("Welcome to the Student Performance Predictor")
+st.set_page_config(page_title="Homepage", layout="wide")
+
+st.title("🎓 Student Performance Prediction")
 st.markdown("""
-This app predicts student marks and pass/fail outcomes using demographic and behavioral data.
+Welcome to the **Student Prediction App**.
 
-**Sections:**
-- 📊 EDA: Explore the dataset
-- 🧠 Modelling: Predict marks and pass/fail outcomes
-- 🧪 Try it Yourself: Input your own data
+This app predicts student **marks** based on demographic information and then uses those marks to predict their **Pass/Fail** status.
 
-> Use the sidebar to navigate between pages.
+Use the sidebar to:
+- Explore the dataset
+- View model training results
+- Try out your own prediction
+- See the conclusion and insights
 """)

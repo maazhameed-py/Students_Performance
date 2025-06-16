@@ -6,11 +6,16 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.metrics import mean_squared_error, accuracy_score, classification_report
 
-st.set_page_config(page_title="Prediction Models", layout="wide")
 
-st.title("🧠 Model: Predict Scores and Pass/Fail")
 
-# Load Data
+
+st.set_page_config(page_title="Model", layout="wide")
+st.title("🤖 Model Training & Prediction")
+st.write("This is the Modelling page.")
+
+
+
+
 df = pd.read_csv("StudentsPerformance_dataset.csv")
 
 features_demo = ['gender', 'race/ethnicity', 'parental level of education', 'lunch',
@@ -47,32 +52,31 @@ math_preds = math_model.predict(X_test)
 reading_preds = reading_model.predict(X_test)
 writing_preds = writing_model.predict(X_test)
 
-st.subheader("Regression Performance (Demographics → Marks)")
-st.write(f"✍️ MSE (Math): {mean_squared_error(y_math_test, math_preds):.2f}")
-st.write(f"✍️ MSE (Reading): {mean_squared_error(y_reading_test, reading_preds):.2f}")
-st.write(f"✍️ MSE (Writing): {mean_squared_error(y_writing_test, writing_preds):.2f}")
+st.subheader("🎯 Regression Results (Demographics → Marks)")
+st.write(f"MSE (Math): {mean_squared_error(y_math_test, math_preds):.2f}")
+st.write(f"MSE (Reading): {mean_squared_error(y_reading_test, reading_preds):.2f}")
+st.write(f"MSE (Writing): {mean_squared_error(y_writing_test, writing_preds):.2f}")
 
-# Classifier Model
-df_encoded['predicted_avg'] = df_encoded[['math score', 'reading score', 'writing score']].mean(axis=1)
+# Pass/Fail Classification
 df_encoded['target'] = df_encoded['target'].apply(lambda x: 1 if x == 'Pass' else 0)
-
 marks_only = df_encoded[['math score', 'reading score', 'writing score']]
 target = df_encoded['target']
 
 X_train_m, X_test_m, y_train_m, y_test_m = train_test_split(marks_only, target, stratify=target, test_size=0.2, random_state=42)
+
 clf_model = RandomForestClassifier()
 clf_model.fit(X_train_m, y_train_m)
 
 y_pred_m = clf_model.predict(X_test_m)
 acc = accuracy_score(y_test_m, y_pred_m)
 
-st.subheader("Classification Performance (Marks → Pass/Fail)")
-st.write(f"✅ Accuracy: {acc:.2f}")
+st.subheader("✅ Classification Results (Marks → Pass/Fail)")
+st.write(f"Accuracy: {acc:.2f}")
 st.text("Classification Report:")
 st.text(classification_report(y_test_m, y_pred_m))
 
-# User Input
-st.header("Try It Yourself")
+# Try it yourself
+st.subheader("🧪 Try Prediction Yourself")
 
 def user_input_form():
     with st.form("user_input"):
@@ -118,12 +122,11 @@ if user_input:
         user_df[col] = le.fit_transform(user_df[col])
 
     user_scaled = scaler.transform(user_df[features_demo])
-
     math_pred = math_model.predict(user_scaled)[0]
     reading_pred = reading_model.predict(user_scaled)[0]
     writing_pred = writing_model.predict(user_scaled)[0]
 
-    st.subheader("\U0001F4CA Predicted Marks")
+    st.write("📘 Predicted Scores:")
     st.write(f"Math: {math_pred:.2f}")
     st.write(f"Reading: {reading_pred:.2f}")
     st.write(f"Writing: {writing_pred:.2f}")
@@ -131,5 +134,4 @@ if user_input:
     pred_df = pd.DataFrame([[math_pred, reading_pred, writing_pred]], columns=['math score', 'reading score', 'writing score'])
     pass_pred = clf_model.predict(pred_df)[0]
     result = "✅ Pass" if pass_pred == 1 else "❌ Fail"
-    st.subheader("🎯 Final Prediction")
     st.success(f"The student is predicted to: **{result}**")
